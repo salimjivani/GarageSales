@@ -24,15 +24,7 @@ $x = 0;
 
 while($userquerydata = sqlsrv_fetch_array($userqueryresults))
 	{
-
-
 		array_push($sellerdisplay,$userquerydata);
-
-		echo "<pre>";
-		
-		print_r(json_encode($userquerydata));
-		
-		echo "</pre>";
 		$x++;
 	}
 
@@ -53,11 +45,15 @@ while($userquerydata = sqlsrv_fetch_array($userqueryresults))
 			{
 				if(sellerinformation[x]['SellerCategoryID'] == 6)
 				{
-					document.write("<img src='images\'_25690\'default.jpg'/>");
+					document.write('<img src="images/_'+sellerinformation[x]['SellerUniqID']+'/'+sellerinformation[x]['Details']+'"/>');
+				}
+				else
+				{
+					document.write(sellerinformation[x]['Details']);
 				}
 
 			}
 		</script>
-		<img src="images\_25690\default.jpg" />
+
 	</body>
 </html>
