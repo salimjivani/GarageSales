@@ -1,39 +1,34 @@
 <?php
-/*http://localhost:8080/GarageSales/signupfilecreate.php?fname=salim&lname=test&pnumber=4698313893&staddress=5409delreydrive&zipaddress=76208&file[]=132132&file[]=56498798*/	
+
 //Get from signup.php form
 
 $selleruniqID = rand();
 $signupinputs = array();
 $signupinputs[0] = array();
 
+$v = 0;
 
 foreach($_FILES['file']['name'] as $filename)
 	{
 		if($filename)
 		{
-			array_push($signupinputs[0], $filename);
+			$signupinputs[0][$v]['filename'] = $filename;
+			$v++;
 		}
 	}
+
+ $v = 0;
 
 foreach($_FILES['file']['tmp_name'] as $filetmp)
 	{
 		if($filetmp)
 		{
-			array_push($signupinputs[0], $filetmp);
+			$signupinputs[0][$v]['tmpname'] = $filetmp;
+			$v++;
 		}
 	}
 
-
-
-if(!$_POST['fname'])
-	{
-		echo ERROR;
-	} 
-else 
-	{
-	 	array_push($signupinputs ,$_POST['fname']);
-	};
-
+array_push($signupinputs ,$_POST['fname']);
 array_push($signupinputs ,$_POST['lname']);
 array_push($signupinputs ,$_POST['pnumber']);
 array_push($signupinputs ,$_POST['staddress']);
@@ -47,8 +42,6 @@ print_r(json_encode($signupinputs));
 //Create connection to database\
 $serverName = "ARCADECOMP-PC\SQLEXPRESS"; //serverName\instanceName
 
-// Since UID and PWD are not specified in the $connectionInfo array,
-// The connection will be attempted using Windows Authentication.
 $connectionInfo = array( "Database"=>"GarageSales");
 $conn = sqlsrv_connect( $serverName, $connectionInfo);
 
@@ -59,6 +52,7 @@ if( $conn ) {
 }
 
 //insert into dbo.Sellers
+
 $insertsellers = "INSERT INTO Sellers (SellerUniqID, DateTime) VALUES ('".$signupinputs[6]."','".date("Y/m/d h:s:m")."')";
 sqlsrv_query($conn,$insertsellers);
 
@@ -79,11 +73,26 @@ sqlsrv_query($conn,$insertsellersdetailsquery);
 $insertsellersdetailsquery= "INSERT INTO SellerDetails (SellerUniqID,SellerCategoryID,Details) VALUES ('".$signupinputs[6]."','5','".$signupinputs[5]."')";
 sqlsrv_query($conn,$insertsellersdetailsquery);
 
+mkdir('C:\xampp\htdocs\GarageSales\images/_'.$signupinputs[6]);
+
 //images
 for ($x = 0; $x < count($signupinputs[0]); $x++)
 	{
-		$insertsellersdetailsquery = "INSERT INTO SellerDetails (SellerUniqID,SellerCategoryID,Details) VALUES ('".$signupinputs[6]."','6','".$signupinputs[0][$x]."')";
+		$insertsellersdetailsquery = "INSERT INTO SellerDetails (SellerUniqID,SellerCategoryID,Details) VALUES ('".$signupinputs[6]."','6','".$signupinputs[0][$x]['filename']."')";
 		sqlsrv_query($conn,$insertsellersdetailsquery);
+
+
+		//create directories image files from sign.php form
+
+		$targetdir ="images/_".$signupinputs[6]."/".$signupinputs[0][$x]['filename'];
+
+		if (move_uploaded_file($signupinputs[0][$x]['tmpname'], $targetdir)) {
+		    echo "Uploaded";
+		    echo $signupinputs[0][$x]['filename'];	
+		} else {
+		   echo "File was not uploaded";
+		   echo $signupinputs[0][$x]['filename'];	
+		}		
 	}
 
 
@@ -96,26 +105,6 @@ while($userquerydata = sqlsrv_fetch_array($userqueryresults))
 	}
 */
 
-//create directories image files from sign.php form
-
-mkdir('C:\xampp\htdocs\GarageSales\images/_'.$signupinputs[6]);
-/*
-$oldpath = getcwd();
-chdir('C:\xampp\htdocs\GarageSales\images\_'.$signupinputs[6]);
-echo getcwd();
-*/
-
-
-$targetdir ="images/_".$signupinputs[6]."/".$signupinputs[0][0];
-
-
-if (move_uploaded_file($signupinputs[0][2], $targetdir)) {
-    echo "Uploaded";
-    echo $signupinputs[0][0];	
-} else {
-   echo "File was not uploaded";
-   echo $signupinputs[0][0];	
-}
 
 
 ?>
