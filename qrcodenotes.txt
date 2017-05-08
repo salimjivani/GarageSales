@@ -1,1 +1,8 @@
-https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=www.ign.com&format=jpeg
+<?php
+	$imgtest = file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=www.ign.com&format=jpeg');
+	$imgencode = base64_encode($imgtest);
+	
+	echo "<img src=data:image;base64,".$imgencode." >";
+	echo $imgencode;
+
+?>
