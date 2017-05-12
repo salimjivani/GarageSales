@@ -30,7 +30,7 @@ while($userquerydata = sqlsrv_fetch_array($userqueryresults))
 
 
 //connect to qrcode api
-	$qrcodeurl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=www.ign.com&format=jpeg';
+	$qrcodeurl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://intense-plains-79330.herokuapp.com/&format=jpeg';
 	$qrcodecontents = file_get_contents($qrcodeurl);
 	$qrcodeencode = base64_encode($qrcodecontents);
 	array_push($sellerdisplay,'data:image/jpeg;base64,'.$qrcodeencode);
